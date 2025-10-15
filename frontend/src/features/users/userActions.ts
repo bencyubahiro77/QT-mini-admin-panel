@@ -5,9 +5,7 @@ import { decodeUserList, initializeProtobuf } from '../../utils/protobuf';
 import { verifyUserIntegrity } from '../../utils/crypto';
 import { RootState } from '../../app/store';
 
-/**
- * Fetch public key from backend
- */
+
 export const fetchPublicKey = createAsyncThunk(
   'users/fetchPublicKey',
   async () => {
@@ -16,9 +14,6 @@ export const fetchPublicKey = createAsyncThunk(
   }
 );
 
-/**
- * Fetch and decode users from Protobuf endpoint
- */
 export const fetchUsers = createAsyncThunk(
   'users/fetchUsers',
   async (_, { getState, dispatch }) => {
@@ -71,9 +66,7 @@ export const fetchUsers = createAsyncThunk(
   }
 );
 
-/**
- * Create a new user
- */
+
 export const createUser = createAsyncThunk(
   'users/createUser',
   async (userData: CreateUserDto) => {
@@ -82,9 +75,7 @@ export const createUser = createAsyncThunk(
   }
 );
 
-/**
- * Update user
- */
+
 export const updateUser = createAsyncThunk(
   'users/updateUser',
   async ({ id, data }: { id: string; data: UpdateUserDto }) => {
@@ -93,9 +84,7 @@ export const updateUser = createAsyncThunk(
   }
 );
 
-/**
- * Delete user
- */
+
 export const deleteUser = createAsyncThunk(
   'users/deleteUser',
   async (id: string) => {

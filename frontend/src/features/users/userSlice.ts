@@ -101,5 +101,4 @@ const userSlice = createSlice({
 export const { clearError, setLoading } = userSlice.actions;
 export default userSlice.reducer;
 
-// Re-export actions for convenience
 export { fetchPublicKey, fetchUsers, createUser, updateUser, deleteUser };

@@ -17,15 +17,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { User, CreateUserDto, UpdateUserDto } from '../../types';
+import { UserFormProps, CreateUserDto } from '../../types';
 
-interface UserFormProps {
-  open: boolean;
-  onClose: () => void;
-  onSubmit: (data: CreateUserDto | UpdateUserDto) => void;
-  user?: User | null;
-  loading?: boolean;
-}
 
 export function UserForm({ open, onClose, onSubmit, user, loading }: UserFormProps) {
   const [formData, setFormData] = useState<CreateUserDto>({

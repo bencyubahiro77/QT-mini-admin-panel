@@ -1,11 +1,7 @@
 import { LayoutDashboard, Users, X } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { cn } from '../../lib/utils';
-
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import { SidebarProps } from '../../types';
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },

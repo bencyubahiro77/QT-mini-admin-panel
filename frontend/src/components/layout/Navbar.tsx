@@ -2,10 +2,8 @@
 import { LayoutDashboard, Menu, Sun, Moon } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useState, useEffect } from 'react';
+import { NavbarProps } from '../../types';
 
-interface NavbarProps {
-  onMenuClick: () => void;
-}
 
 export function Navbar({ onMenuClick }: NavbarProps) {
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
