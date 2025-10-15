@@ -1,7 +1,3 @@
-/**
- * Swagger Documentation for Health Endpoint
- */
-
 export const healthCheckDocs = {
   get: {
     summary: 'Health check',

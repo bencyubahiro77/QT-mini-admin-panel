@@ -11,9 +11,6 @@ import {
 import { healthCheckDocs } from '../docs/health.docs';
 import { rootEndpointDocs } from '../docs/root.docs';
 
-/**
- * Swagger/OpenAPI Configuration
- */
 
 const options: swaggerJsdoc.Options = {
   definition: {
@@ -180,7 +177,7 @@ const options: swaggerJsdoc.Options = {
       '/api/users/public-key': getPublicKeyDocs,
     },
   },
-  apis: [], // Not using JSDoc annotations anymore
+  apis: [],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

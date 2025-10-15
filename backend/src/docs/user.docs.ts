@@ -1,7 +1,3 @@
-/**
- * Swagger Documentation for User Endpoints
- */
-
 export const createUserDocs = {
   post: {
     summary: 'Create a new user',

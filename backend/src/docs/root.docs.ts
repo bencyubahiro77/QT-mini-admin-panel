@@ -1,7 +1,3 @@
-/**
- * Swagger Documentation for Root Endpoint
- */
-
 export const rootEndpointDocs = {
   get: {
     summary: 'API Information',
