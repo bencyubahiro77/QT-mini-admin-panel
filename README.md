@@ -2,17 +2,16 @@
 
 Full-stack application with Protobuf serialization and RSA-4096 cryptographic signing.
 
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 - **Node.js** 18+ and npm installed
 - Git (to clone the repository)
 
-**Note:** No `.env` files needed! Everything works with sensible defaults.
 
 ### Step 1: Clone the Repository
 ```bash
-git clone https://github.com/bencyubahiro77/QT-mini-admin-panel.git`
+git clone https://github.com/bencyubahiro77/QT-mini-admin-panel.git
 cd QT
 ```
 
@@ -114,45 +113,3 @@ QT/
 - **Modern UI**: Built with Shadcn/UI and Tailwind CSS
 - **API Documentation**: Interactive Swagger UI at http://localhost:5000/api-docs
 
-##  Notes & Assumptions
-
-### Data Flow
-1. **Backend** generates RSA-4096 key pair on first startup
-2. When creating/updating users:
-   - Email is hashed using SHA-384
-   - Email is signed with private RSA key
-   - Hash and signature stored in SQLite database
-3. **Frontend** fetches data as Protobuf binary format
-4. Each user is cryptographically verified before display
-
-### Key Assumptions
-- **Database**: SQLite is used for simplicity (file-based at `backend/prisma/dev.db`)
-- **RSA Keys**: Auto-generated on first run and stored in `backend/keys/` directory
-  - `private-key.pem` - Used for signing (keep secure in production!)
-  - `public-key.pem` - Used for verification (shared with frontend via API)
-  - Keys persist across restarts
-- **Ports**: Backend on 5000, Frontend on 5173 (defaults, configurable via `.env`)
-- **CORS**: Enabled for local development (configure for production)
-- **API Proxy**: Frontend dev server proxies `/api` requests to backend automatically
-- **Data Integrity**: All users must have valid signatures to appear in the UI
-- **Hot Reload**: Both servers support hot reload during development
-
-### Important Notes
--  **Zero Configuration**: No `.env` files needed for local development - everything auto-generates
--  **First Run**: Database (`dev.db`) and RSA keys (`keys/*.pem`) are created automatically
--  **Email Changes**: Updating a user's email triggers re-signing with new hash and signature
--  **Security**: Current implementation is for demonstration - add authentication for production
--  **Protobuf**: ~60% smaller payload compared to JSON for user lists
--  **API Docs**: Swagger UI provides interactive testing at http://localhost:5000/api-docs
--  **Environment Variables**: See `.env.example` files for optional configuration (not required)
-
-### Troubleshooting
-- **Port 5000 in use**: Stop other processes or change `PORT` in `.env`
-- **Frontend can't connect**: Verify backend is running at http://localhost:5000
-- **Crypto verification fails**: Keys auto-generate on first run. If deleted, restart backend to regenerate.
-- **Prisma errors**: Run `npm run db:push` in backend directory
-- **Missing dependencies**: Delete `node_modules` and run `npm install` again
-
----
-
-**Built with TypeScript, React, and Node.js**
