@@ -11,14 +11,10 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { User } from '../../types';
+import { DashboardProps } from '../../types';
 
-interface DashboardProps {
-  users: User[];
-}
 
 export function Dashboard({ users }: DashboardProps) {
-  // Calculate statistics
   const stats = useMemo(() => {
     const total = users.length;
     const active = users.filter((u) => u.status === 'ACTIVE').length;

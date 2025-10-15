@@ -19,13 +19,8 @@ import {
 } from '@/components/ui/dialog';
 import { User } from '../../types';
 import { formatDateTime } from '@/lib/utils';
+import { UserTableProps } from '../../types';
 
-interface UserTableProps {
-  users: User[];
-  onEdit: (user: User) => void;
-  onDelete: (id: string) => void;
-  loading?: boolean;
-}
 
 export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

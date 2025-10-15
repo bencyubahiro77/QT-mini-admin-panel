@@ -27,36 +27,20 @@ async function pemToKey(pem: string): Promise<CryptoKey> {
   );
 }
 
-/**
- * Hash data using SHA-384
- */
+// Hash data using SHA-384
 async function sha384Hash(data: string): Promise<ArrayBuffer> {
   const encoder = new TextEncoder();
   const dataBuffer = encoder.encode(data);
   return await crypto.subtle.digest('SHA-384', dataBuffer);
 }
 
-/**
- * Convert hex string to ArrayBuffer
- */
-function hexToArrayBuffer(hex: string): ArrayBuffer {
-  const bytes = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < hex.length; i += 2) {
-    bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
-  }
-  return bytes.buffer;
-}
-
-/**
- * Verify RSA signature
- */
+// Verify RSA signature
 export async function verifySignature(
   email: string,
   signature: string,
   publicKeyPem: string
 ): Promise<boolean> {
   try {
-    // Import public key
     const publicKey = await pemToKey(publicKeyPem);
 
     // Convert signature from base64 to ArrayBuffer
@@ -80,9 +64,7 @@ export async function verifySignature(
   }
 }
 
-/**
- * Verify email hash (SHA-384)
- */
+// Verify email hash (SHA-384)
 export async function verifyEmailHash(email: string, hash: string): Promise<boolean> {
   try {
     const computedHash = await sha384Hash(email);
@@ -96,9 +78,7 @@ export async function verifyEmailHash(email: string, hash: string): Promise<bool
   }
 }
 
-/**
- * Verify both email hash and signature
- */
+// Verify both email hash and signature
 export async function verifyUserIntegrity(
   email: string,
   emailHash: string,

@@ -53,3 +53,31 @@ export interface NavItem {
   href: string;
   icon?: React.ReactNode;
 }
+
+export interface SidebarProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+export interface NavbarProps {
+  onMenuClick: () => void;
+}
+
+export interface DashboardProps {
+  users: User[];
+}
+
+export interface UserFormProps {
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: CreateUserDto | UpdateUserDto) => void;
+  user?: User | null;
+  loading?: boolean;
+}
+
+export interface UserTableProps {
+  users: User[];
+  onEdit: (user: User) => void;
+  onDelete: (id: string) => void;
+  loading?: boolean;
+}

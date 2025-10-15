@@ -1,6 +1,5 @@
 import protobuf from 'protobufjs';
 
-// Define Protobuf schema inline
 const userProtoSchema = `
 syntax = "proto3";
 
@@ -21,9 +20,7 @@ message UserList {
 
 let UserListType: protobuf.Type | null = null;
 
-/**
- * Initialize Protobuf schema
- */
+// Initialize Protobuf schema
 export async function initializeProtobuf(): Promise<void> {
   try {
     const root = protobuf.parse(userProtoSchema).root;
@@ -33,9 +30,7 @@ export async function initializeProtobuf(): Promise<void> {
   }
 }
 
-/**
- * Decode Protobuf buffer to UserList
- */
+// Decode Protobuf buffer to UserList
 export function decodeUserList(buffer: Uint8Array): any {
   if (!UserListType) {
     throw new Error('Protobuf not initialized. Call initializeProtobuf() first.');
@@ -54,12 +49,4 @@ export function decodeUserList(buffer: Uint8Array): any {
   } catch (error) {
     throw error;
   }
-}
-
-/**
- * Decode Protobuf from base64 string
- */
-export function decodeUserListFromBase64(base64String: string): any {
-  const buffer = Uint8Array.from(atob(base64String), c => c.charCodeAt(0));
-  return decodeUserList(buffer);
 }

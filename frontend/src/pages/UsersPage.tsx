@@ -1,7 +1,3 @@
-/**
- * Users Page
- */
-
 import { useState } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/button';
