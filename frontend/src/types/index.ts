@@ -84,6 +84,8 @@ export interface NavItem {
 export interface SidebarProps {
   isOpen: boolean;
   onClose: () => void;
+  isCollapsed: boolean;
+  onToggleCollapse: () => void;
 }
 
 export interface NavbarProps {
