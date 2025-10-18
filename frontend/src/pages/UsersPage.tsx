@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { UserTable } from '../features/users/UserTable';
@@ -7,6 +7,7 @@ import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { fetchUsers, createUser, updateUser, deleteUser } from '../features/users/userSlice';
 import { useToast } from '../components/ui/use-toast';
 import { User, CreateUserDto, UpdateUserDto } from '../types';
+import { useRefresh } from '../app/refresh';
 
 export function UsersPage() {
   const dispatch = useAppDispatch();
@@ -16,13 +17,10 @@ export function UsersPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
 
-  const handleRefresh = () => {
-    dispatch(fetchUsers());
-    toast({
-      title: 'Refreshing',
-      description: 'Fetching latest user data...',
-    });
-  };
+  const { isRefreshing, handleRefresh } = useRefresh(
+    () => dispatch(fetchUsers()).unwrap(),
+    { successMessage: 'Users data refreshed successfully' }
+  );
 
   const handleCreateClick = () => {
     setEditingUser(null);
@@ -82,8 +80,13 @@ export function UsersPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <h2 className="text-3xl font-bold tracking-tight">Users</h2>
         <div className="flex gap-2">
-          <Button onClick={handleRefresh} variant="outline" size="sm">
-            <RefreshCw className="h-4 w-4 mr-2" />
+          <Button 
+            onClick={handleRefresh} 
+            variant="outline" 
+            size="sm"
+            disabled={isRefreshing}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
           <Button onClick={handleCreateClick}>

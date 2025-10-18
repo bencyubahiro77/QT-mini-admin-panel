@@ -39,7 +39,7 @@ export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) 
     }
   };
 
-  // Filter only verified users (as per requirements)
+  // Filter only verified users
   const verifiedUsers = users.filter((user) => user.isVerified !== false);
 
   if (loading) {
@@ -69,7 +69,7 @@ export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) 
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>Signature</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -139,7 +139,6 @@ export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) 
         </Table>
       </div>
 
-      {/* Delete Confirmation Dialog */}
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>

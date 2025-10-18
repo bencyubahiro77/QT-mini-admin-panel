@@ -26,7 +26,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
     <nav className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
-          {/* Left: Menu button + Logo */}
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
@@ -48,7 +47,6 @@ export function Navbar({ onMenuClick }: NavbarProps) {
             </div>
           </div>
 
-          {/* Right: Theme toggle */}
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"

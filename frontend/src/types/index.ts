@@ -81,3 +81,8 @@ export interface UserTableProps {
   onDelete: (id: string) => void;
   loading?: boolean;
 }
+
+export interface UseRefreshOptions {
+  successMessage?: string;
+  errorMessage?: string;
+}
