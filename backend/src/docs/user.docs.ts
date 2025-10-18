@@ -59,12 +59,81 @@ export const createUserDocs = {
 
 export const getAllUsersDocs = {
   get: {
-    summary: 'Get all users',
-    description: 'Retrieves a list of all users in JSON format',
+    summary: 'Get all users with pagination, search, and filters',
+    description: 'Retrieves a paginated list of users with support for search, sorting, and filtering',
     tags: ['Users'],
+    parameters: [
+      {
+        in: 'query',
+        name: 'page',
+        schema: {
+          type: 'integer',
+          minimum: 1,
+          default: 1,
+        },
+        description: 'Page number',
+      },
+      {
+        in: 'query',
+        name: 'limit',
+        schema: {
+          type: 'integer',
+          minimum: 1,
+          maximum: 100,
+          default: 10,
+        },
+        description: 'Number of items per page (max 100)',
+      },
+      {
+        in: 'query',
+        name: 'search',
+        schema: {
+          type: 'string',
+        },
+        description: 'Search by email (case-insensitive)',
+      },
+      {
+        in: 'query',
+        name: 'sortBy',
+        schema: {
+          type: 'string',
+          enum: ['email', 'role', 'status', 'createdAt', 'updatedAt'],
+          default: 'createdAt',
+        },
+        description: 'Field to sort by',
+      },
+      {
+        in: 'query',
+        name: 'sortOrder',
+        schema: {
+          type: 'string',
+          enum: ['asc', 'desc'],
+          default: 'desc',
+        },
+        description: 'Sort order',
+      },
+      {
+        in: 'query',
+        name: 'filterRole',
+        schema: {
+          type: 'string',
+          enum: ['ADMIN', 'USER'],
+        },
+        description: 'Filter by role',
+      },
+      {
+        in: 'query',
+        name: 'filterStatus',
+        schema: {
+          type: 'string',
+          enum: ['ACTIVE', 'INACTIVE'],
+        },
+        description: 'Filter by status',
+      },
+    ],
     responses: {
       200: {
-        description: 'List of users',
+        description: 'Paginated list of users',
         content: {
           'application/json': {
             schema: {
@@ -76,12 +145,46 @@ export const getAllUsersDocs = {
                     $ref: '#/components/schemas/User',
                   },
                 },
-                count: {
-                  type: 'integer',
-                  description: 'Total number of users',
-                  example: 10,
+                pagination: {
+                  type: 'object',
+                  properties: {
+                    currentPage: {
+                      type: 'integer',
+                      example: 1,
+                    },
+                    totalPages: {
+                      type: 'integer',
+                      example: 5,
+                    },
+                    totalCount: {
+                      type: 'integer',
+                      example: 50,
+                    },
+                    pageSize: {
+                      type: 'integer',
+                      example: 10,
+                    },
+                    hasNextPage: {
+                      type: 'boolean',
+                      example: true,
+                    },
+                    hasPreviousPage: {
+                      type: 'boolean',
+                      example: false,
+                    },
+                  },
                 },
               },
+            },
+          },
+        },
+      },
+      500: {
+        description: 'Server error',
+        content: {
+          'application/json': {
+            schema: {
+              $ref: '#/components/schemas/Error',
             },
           },
         },
