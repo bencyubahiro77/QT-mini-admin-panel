@@ -19,13 +19,14 @@ import {
 } from '@/components/ui/dialog';
 import { UserFormProps, CreateUserDto } from '../../types';
 
+const initialFormState: CreateUserDto = {
+  email: '',
+  role: 'USER',
+  status: 'ACTIVE',
+};
 
 export function UserForm({ open, onClose, onSubmit, user, loading }: UserFormProps) {
-  const [formData, setFormData] = useState<CreateUserDto>({
-    email: '',
-    role: 'USER',
-    status: 'ACTIVE',
-  });
+  const [formData, setFormData] = useState<CreateUserDto>(initialFormState);
 
   useEffect(() => {
     if (user) {
@@ -35,21 +36,23 @@ export function UserForm({ open, onClose, onSubmit, user, loading }: UserFormPro
         status: user.status,
       });
     } else {
-      setFormData({
-        email: '',
-        role: 'USER',
-        status: 'ACTIVE',
-      });
+      setFormData(initialFormState);
     }
-  }, [user]);
+  }, [user, open]);
+
+  const handleClose = () => {
+    setFormData(initialFormState);
+    onClose();
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
+    setFormData(initialFormState);
   };
 
   return (
-    <Dialog open={open} onOpenChange={onClose}>
+    <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>{user ? 'Edit User' : 'Create New User'}</DialogTitle>
@@ -113,13 +116,13 @@ export function UserForm({ open, onClose, onSubmit, user, loading }: UserFormPro
             <Button
               type="button"
               variant="outline"
-              onClick={onClose}
+              onClick={handleClose}
               disabled={loading}
             >
               Cancel
             </Button>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Saving...' : user ? 'Save Changes' : 'Create User'}
+              {loading ? 'Saving...' : user ? 'Save' : 'Create User'}
             </Button>
           </DialogFooter>
         </form>

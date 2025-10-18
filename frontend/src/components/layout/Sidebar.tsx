@@ -27,7 +27,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           isOpen ? 'translate-x-0' : '-translate-x-full'
         )}
       >
-        <div className="flex items-center justify-between p-4 ">
+        <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold lg:hidden">Admin Panel</h2>
           <button
             onClick={onClose}

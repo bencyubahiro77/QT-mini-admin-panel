@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User, UserState } from '../../types';
+import { User, UserState, PaginationMeta, UserQueryParams } from '../../types';
 import {
   fetchPublicKey,
   fetchUsers,
+  fetchAllUsers,
   createUser,
   updateUser,
   deleteUser,
@@ -10,9 +11,20 @@ import {
 
 const initialState: UserState = {
   users: [],
+  allUsers: [],
   loading: false,
   error: null,
   publicKey: null,
+  pagination: null,
+  queryParams: {
+    page: 1,
+    limit: 10,
+    search: '',
+    sortBy: 'createdAt',
+    sortOrder: 'desc',
+    filterRole: 'ALL',
+    filterStatus: 'ALL',
+  },
 };
 
 const userSlice = createSlice({
@@ -25,6 +37,12 @@ const userSlice = createSlice({
     setLoading: (state, action: PayloadAction<boolean>) => {
       state.loading = action.payload;
     },
+    setQueryParams: (state, action: PayloadAction<Partial<UserQueryParams>>) => {
+      state.queryParams = { ...state.queryParams, ...action.payload };
+    },
+    resetQueryParams: (state) => {
+      state.queryParams = initialState.queryParams;
+    },
   },
   extraReducers: (builder) => {
     // Fetch public key
@@ -33,19 +51,35 @@ const userSlice = createSlice({
         state.publicKey = action.payload;
       });
 
-    // Fetch users
+    // Fetch users (paginated)
     builder
       .addCase(fetchUsers.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<User[]>) => {
+      .addCase(fetchUsers.fulfilled, (state, action: PayloadAction<{ users: User[]; pagination: PaginationMeta }>) => {
         state.loading = false;
-        state.users = action.payload;
+        state.users = action.payload.users;
+        state.pagination = action.payload.pagination;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message || 'Failed to fetch users';
+      });
+
+    // Fetch all users (for dashboard)
+    builder
+      .addCase(fetchAllUsers.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchAllUsers.fulfilled, (state, action: PayloadAction<User[]>) => {
+        state.loading = false;
+        state.allUsers = action.payload;
+      })
+      .addCase(fetchAllUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.error.message || 'Failed to fetch all users';
       });
 
     // Create user
@@ -98,7 +132,7 @@ const userSlice = createSlice({
   },
 });
 
-export const { clearError, setLoading } = userSlice.actions;
+export const { clearError, setLoading, setQueryParams, resetQueryParams } = userSlice.actions;
 export default userSlice.reducer;
 
-export { fetchPublicKey, fetchUsers, createUser, updateUser, deleteUser };
+export { fetchPublicKey, fetchUsers, fetchAllUsers, createUser, updateUser, deleteUser };

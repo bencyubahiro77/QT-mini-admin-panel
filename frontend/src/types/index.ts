@@ -26,11 +26,38 @@ export interface UpdateUserDto {
   status?: Status;
 }
 
+export interface PaginationMeta {
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+  pageSize: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
+export interface UserQueryParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  sortBy?: string;
+  sortOrder?: 'asc' | 'desc';
+  filterRole?: Role | 'ALL';
+  filterStatus?: Status | 'ALL';
+}
+
 export interface UserState {
-  users: User[];
+  users: User[]; // Paginated users for Users page
+  allUsers: User[]; // All users for Dashboard
   loading: boolean;
   error: string | null;
   publicKey: string | null;
+  pagination: PaginationMeta | null;
+  queryParams: UserQueryParams;
+}
+
+export interface CompactUserFiltersProps {
+  queryParams: UserQueryParams;
+  onQueryChange: (params: Partial<UserQueryParams>) => void;
 }
 
 export interface ApiResponse<T> {
@@ -80,4 +107,14 @@ export interface UserTableProps {
   onEdit: (user: User) => void;
   onDelete: (id: string) => void;
   loading?: boolean;
+}
+
+export interface UseRefreshOptions {
+  successMessage?: string;
+  errorMessage?: string;
+}
+
+export interface ExtendedUserTableProps extends UserTableProps {
+  queryParams?: UserQueryParams;
+  onSort?: (sortBy: string) => void;
 }
