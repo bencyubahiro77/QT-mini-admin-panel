@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import api from '../../lib/axios';
-import { User, CreateUserDto, UpdateUserDto } from '../../types';
+import { User, CreateUserDto, UpdateUserDto, UserQueryParams, PaginationMeta } from '../../types';
 import { decodeUserList, initializeProtobuf } from '../../utils/protobuf';
 import { verifyUserIntegrity } from '../../utils/crypto';
 import { RootState } from '../../app/store';
@@ -14,8 +14,74 @@ export const fetchPublicKey = createAsyncThunk(
   }
 );
 
-export const fetchUsers = createAsyncThunk(
+export const fetchUsers = createAsyncThunk<
+  { users: User[]; pagination: PaginationMeta },
+  UserQueryParams | void
+>(
   'users/fetchUsers',
+  async (queryParams, { getState, dispatch }) => {
+    await initializeProtobuf();
+
+    const state = getState() as RootState;
+    let publicKey = state.users.publicKey;
+    
+    if (!publicKey) {
+      const action = await dispatch(fetchPublicKey());
+      publicKey = action.payload as string;
+    }
+
+    const params = queryParams || state.users.queryParams;
+
+    // Fetch paginated data from /users endpoint
+    const response = await api.get('/users', {
+      params: {
+        page: params.page,
+        limit: params.limit,
+        search: params.search,
+        sortBy: params.sortBy,
+        sortOrder: params.sortOrder,
+        filterRole: params.filterRole !== 'ALL' ? params.filterRole : undefined,
+        filterStatus: params.filterStatus !== 'ALL' ? params.filterStatus : undefined,
+      },
+    });
+
+    const users: User[] = response.data.users || [];
+    const pagination: PaginationMeta = response.data.pagination;
+
+    // Verify user integrity for all fetched users
+    const verifiedUsers = await Promise.all(
+      users.map(async (user) => {
+        try {
+          const verification = await verifyUserIntegrity(
+            user.email,
+            user.emailHash,
+            user.signature,
+            publicKey!
+          );
+          
+          return {
+            ...user,
+            isVerified: verification.valid,
+            verificationError: !verification.valid 
+              ? `Hash: ${verification.hashValid ? '✓' : '✗'}, Sig: ${verification.signatureValid ? '✓' : '✗'}`
+              : undefined,
+          };
+        } catch {
+          return {
+            ...user,
+            isVerified: false,
+            verificationError: 'Verification failed',
+          };
+        }
+      })
+    );
+
+    return { users: verifiedUsers, pagination };
+  }
+);
+
+export const fetchAllUsers = createAsyncThunk(
+  'users/fetchAllUsers',
   async (_, { getState, dispatch }) => {
     await initializeProtobuf();
 

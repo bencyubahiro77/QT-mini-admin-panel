@@ -1,11 +1,8 @@
 async function pemToKey(pem: string): Promise<CryptoKey> {
-  // Remove PEM header/footer and whitespace
-  const pemHeader = '-----BEGIN PUBLIC KEY-----';
-  const pemFooter = '-----END PUBLIC KEY-----';
   const pemContents = pem
-    .replace(pemHeader, '')
-    .replace(pemFooter, '')
-    .replace(/\s/g, '');
+    .replace(/-----BEGIN [\w\s]+-----/, '')
+    .replace(/-----END [\w\s]+-----/, '')
+    .replace(/\s+/g, '');
 
   // Convert base64 to binary
   const binaryDer = atob(pemContents);
@@ -14,7 +11,6 @@ async function pemToKey(pem: string): Promise<CryptoKey> {
     binaryDerArray[i] = binaryDer.charCodeAt(i);
   }
 
-  // Import the key
   return await crypto.subtle.importKey(
     'spki',
     binaryDerArray.buffer,

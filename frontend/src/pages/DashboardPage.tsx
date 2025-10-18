@@ -1,17 +1,21 @@
-
+import { useEffect } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Dashboard } from '../features/dashboard/Dashboard';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { fetchUsers } from '../features/users/userSlice';
+import { fetchAllUsers } from '../features/users/userSlice';
 import { useRefresh } from "../app/refresh";
 
 export function DashboardPage() {
   const dispatch = useAppDispatch();
-  const { users } = useAppSelector((state) => state.users);
+  const { allUsers } = useAppSelector((state) => state.users);
+
+  useEffect(() => {
+    dispatch(fetchAllUsers());
+  }, [dispatch]);
 
   const { isRefreshing, handleRefresh } = useRefresh(
-    () => dispatch(fetchUsers()).unwrap(),
+    () => dispatch(fetchAllUsers()).unwrap(),
     { successMessage: 'Dashboard data refreshed successfully' }
   );
 
@@ -29,7 +33,7 @@ export function DashboardPage() {
           Refresh
         </Button>
       </div>
-      <Dashboard users={users} />
+      <Dashboard users={allUsers} />
     </div>
   );
 }

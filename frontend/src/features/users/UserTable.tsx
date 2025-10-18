@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Pencil, Trash2, Shield, ShieldAlert, CheckCircle, XCircle } from 'lucide-react';
+import { Pencil, Trash2, Shield, ShieldAlert, CheckCircle, XCircle, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -17,18 +17,32 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { User } from '../../types';
+import { User, ExtendedUserTableProps } from '../../types';
 import { formatDateTime } from '@/lib/utils';
-import { UserTableProps } from '../../types';
 
 
-export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) {
+export function UserTable({ users, onEdit, onDelete, loading, queryParams, onSort }: ExtendedUserTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const handleDeleteClick = (user: User) => {
     setUserToDelete(user);
     setDeleteDialogOpen(true);
+  };
+
+  const handleSort = (field: string) => {
+    if (onSort) {
+      onSort(field);
+    }
+  };
+
+  const getSortIcon = (field: string) => {
+    if (!queryParams || queryParams.sortBy !== field) {
+      return <ArrowUpDown className="h-4 w-4 ml-1 text-muted-foreground" />;
+    }
+    return queryParams.sortOrder === 'asc' 
+      ? <ArrowUp className="h-4 w-4 ml-1" />
+      : <ArrowDown className="h-4 w-4 ml-1" />;
   };
 
   const handleConfirmDelete = () => {
@@ -64,10 +78,46 @@ export function UserTable({ users, onEdit, onDelete, loading }: UserTableProps) 
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Created</TableHead>
+              <TableHead>
+                <button
+                  onClick={() => handleSort('email')}
+                  className="flex items-center hover:text-foreground transition-colors"
+                  disabled={!onSort}
+                >
+                  Email
+                  {onSort && getSortIcon('email')}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  onClick={() => handleSort('role')}
+                  className="flex items-center hover:text-foreground transition-colors"
+                  disabled={!onSort}
+                >
+                  Role
+                  {onSort && getSortIcon('role')}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  onClick={() => handleSort('status')}
+                  className="flex items-center hover:text-foreground transition-colors"
+                  disabled={!onSort}
+                >
+                  Status
+                  {onSort && getSortIcon('status')}
+                </button>
+              </TableHead>
+              <TableHead>
+                <button
+                  onClick={() => handleSort('createdAt')}
+                  className="flex items-center hover:text-foreground transition-colors"
+                  disabled={!onSort}
+                >
+                  Created
+                  {onSort && getSortIcon('createdAt')}
+                </button>
+              </TableHead>
               <TableHead>Signature</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
