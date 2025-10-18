@@ -12,7 +12,7 @@ Full-stack application with Protobuf serialization and RSA-4096 cryptographic si
 ### Step 1: Clone the Repository
 ```bash
 git clone https://github.com/bencyubahiro77/QT-mini-admin-panel.git
-cd QT
+cd QT-mini-admin-panel
 ```
 
 ### Step 2: Backend Setup

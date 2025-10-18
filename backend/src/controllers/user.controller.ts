@@ -51,8 +51,7 @@ export async function createUser(req: Request, res: Response): Promise<void> {
 
     res.status(201).json({
       message: 'User created successfully',
-      user,
-      publicKey: getPublicKey(),
+      user
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -62,11 +61,66 @@ export async function createUser(req: Request, res: Response): Promise<void> {
 
 export async function getAllUsers(req: Request, res: Response): Promise<void> {
   try {
-    const users = await prisma.user.findMany({
-      orderBy: { createdAt: 'desc' },
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const search = (req.query.search as string) || '';
+    const sortBy = (req.query.sortBy as string) || 'createdAt';
+    const sortOrder = (req.query.sortOrder as string) || 'desc';
+    const filterRole = req.query.filterRole as string;
+    const filterStatus = req.query.filterStatus as string;
+
+    const validatedPage = Math.max(1, page);
+    // Max 100 items per page
+    const validatedLimit = Math.min(Math.max(1, limit), 100); 
+
+    const where: any = {};
+
+    if (filterRole && filterRole !== 'ALL') {
+      where.role = filterRole;
+    }
+
+    if (filterStatus && filterStatus !== 'ALL') {
+      where.status = filterStatus;
+    }
+
+    const validSortFields = ['email', 'role', 'status', 'createdAt', 'updatedAt'];
+    const validatedSortBy = validSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const validatedSortOrder = sortOrder === 'asc' ? 'asc' : 'desc';
+
+    let allUsers = await prisma.user.findMany({
+      where,
+      orderBy: { [validatedSortBy]: validatedSortOrder },
     });
 
-    res.status(200).json({ users });
+    // Apply case-insensitive search filter
+    if (search) {
+      const searchLower = search.toLowerCase();
+      allUsers = allUsers.filter(user => 
+        user.email.toLowerCase().includes(searchLower)
+      );
+    }
+
+    // Calculate pagination
+    const totalCount = allUsers.length;
+    const totalPages = Math.ceil(totalCount / validatedLimit);
+    const skip = (validatedPage - 1) * validatedLimit;
+    const hasNextPage = validatedPage < totalPages;
+    const hasPreviousPage = validatedPage > 1;
+
+    // Apply pagination
+    const users = allUsers.slice(skip, skip + validatedLimit);
+
+    res.status(200).json({
+      users,
+      pagination: {
+        currentPage: validatedPage,
+        totalPages,
+        totalCount,
+        pageSize: validatedLimit,
+        hasNextPage,
+        hasPreviousPage,
+      },
+    });
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error occurred';
     res.status(500).json({ error: 'Failed to fetch users', details: message });
