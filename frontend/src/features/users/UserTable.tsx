@@ -53,7 +53,6 @@ export function UserTable({ users, onEdit, onDelete, loading, queryParams, onSor
     }
   };
 
-  // Filter only verified users
   const verifiedUsers = users.filter((user) => user.isVerified !== false);
 
   if (loading) {
