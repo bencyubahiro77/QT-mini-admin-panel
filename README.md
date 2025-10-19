@@ -23,8 +23,8 @@ cd backend
 # Install dependencies
 npm install
 
-# Setup SQLite database and generate Prisma client
-npm run db:push
+# Setup database with migrations 
+npm run migrate:dev
 
 # Start the backend server
 npm run dev
@@ -53,10 +53,11 @@ Open your browser and navigate to:
 That's it! The application is now running.
 
 **What happens automatically:**
-- ✅ SQLite database created
-- ✅ RSA-4096 keys generated and saved to `backend/keys/`
-- ✅ Frontend proxies API requests to backend
-- ✅ No configuration required!
+- SQLite database created with migrations
+- Database schema tracked and versioned
+- RSA-4096 keys generated and saved to `backend/keys/`
+- Frontend proxies API requests to backend
+- No configuration required!
 
 ##   Project Structure
 
@@ -68,7 +69,10 @@ QT/
 │   │   ├── routes/       # API routes  
 │   │   ├── services/     # Crypto & Protobuf services
 │   │   └── utils/        # RSA key management
-│   └── prisma/           # Database schema
+│   ├── prisma/
+│   │   ├── schema.prisma # Database schema
+│   │   └── migrations/   # Database migrations (tracked)
+│   └── keys/             # RSA-4096 key pairs
 │
 ├── frontend/             # React + Redux Toolkit UI
 │   ├── src/
@@ -112,4 +116,30 @@ QT/
 - **Signature Verification**: Frontend validates all user data integrity
 - **Modern UI**: Built with Shadcn/UI and Tailwind CSS
 - **API Documentation**: Interactive Swagger UI at http://localhost:5000/api-docs
+- **Database Migrations**: Safe, tracked schema changes
 
+##  Database Management
+
+The project uses **Prisma Migrations** for safe database management:
+
+### Available Commands
+```bash
+# Development
+npm run migrate:dev          # Create and apply new migration
+npm run migrate:status       # Check migration status
+npm run migrate:reset        # Reset database (dev only)
+
+# Production
+npm run migrate:deploy       # Apply migrations safely
+
+# Database Tools
+npm run prisma:studio        # Open database GUI
+npm run prisma:generate      # Regenerate Prisma Client
+```
+
+### Making Schema Changes
+1. Edit `prisma/schema.prisma`
+2. Run `npm run migrate:dev`
+3. Name your migration (e.g., "add_user_profile")
+4. Migration is created and applied automatically
+5. Commit migration files to version control
