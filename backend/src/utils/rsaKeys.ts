@@ -57,7 +57,6 @@ export function loadOrGenerateKeyPair(): KeyPair {
         return { privateKey, publicKey };
       }
     } catch (error) {
-      console.error('Failed to read keys from file system:', error);
     }
   }
 

@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { asyncHandler, validateUUID, validatePaginationQuery } from '../middleware';
 import {
   createUser,
   getAllUsers,
@@ -11,14 +12,15 @@ import {
 
 const router = Router();
 
-router.get('/export', exportUsers);
-router.get('/public-key', getPublicKeyEndpoint);
+// Export routes
+router.get('/export', asyncHandler(exportUsers));
+router.get('/public-key', asyncHandler(getPublicKeyEndpoint));
 
 // CRUD routes
-router.post('/', createUser);
-router.get('/', getAllUsers);
-router.get('/:id', getUserById);
-router.put('/:id', updateUser);
-router.delete('/:id', deleteUser);
+router.post('/', asyncHandler(createUser));
+router.get('/', validatePaginationQuery, asyncHandler(getAllUsers));
+router.get('/:id', validateUUID(), asyncHandler(getUserById));
+router.put('/:id', validateUUID(), asyncHandler(updateUser));
+router.delete('/:id', validateUUID(), asyncHandler(deleteUser));
 
 export default router;
