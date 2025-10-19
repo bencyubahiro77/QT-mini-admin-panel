@@ -48,7 +48,6 @@ export function UserForm({ open, onClose, onSubmit, user, loading }: UserFormPro
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit(formData);
-    setFormData(initialFormState);
   };
 
   return (
