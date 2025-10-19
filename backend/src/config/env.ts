@@ -4,7 +4,6 @@ function getEnv(key: string, defaultValue?: string): string {
   const value = process.env[key] || defaultValue;
   
   if (!value) {
-    console.warn(`Warning: Environment variable ${key} is not set`);
     return '';
   }
   

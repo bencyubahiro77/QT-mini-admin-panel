@@ -20,14 +20,15 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  // Log error for debugging
-  console.error('Error occurred:', {
-    message: err.message,
-    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined,
-    path: req.path,
-    method: req.method,
-    timestamp: new Date().toISOString(),
-  });
+  // Log error in development only
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error:', {
+      message: err.message,
+      stack: err.stack,
+      path: req.path,
+      method: req.method,
+    });
+  }
 
   // Default error status and message
   let statusCode = 500;
