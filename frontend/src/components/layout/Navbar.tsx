@@ -36,7 +36,7 @@ export function Navbar({ onMenuClick }: NavbarProps) {
               <Menu className="h-5 w-5" />
             </Button>
 
-            <div className="flex items-center gap-2">
+            <div className="lg:hidden flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
                 <LayoutDashboard className="h-6 w-6" />
               </div>

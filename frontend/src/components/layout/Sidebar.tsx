@@ -22,19 +22,34 @@ export function Sidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: Side
 
       <aside
         className={cn(
-          'fixed top-0 left-0 z-50 h-screen bg-card border-r transform transition-all duration-300 ease-in-out',
-          'lg:translate-x-0 lg:static lg:z-0',
-          isOpen ? 'translate-x-0' : '-translate-x-full',
+          'fixed top-0 left-0 z-50 h-screen bg-card border-r transform transition-all duration-300 ease-in-out overflow-y-auto',
+          'lg:translate-x-0',
+          isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
           isCollapsed ? 'w-16' : 'w-64'
         )}
       >
-        <div className="flex items-center justify-between h-16 px-4 border-b lg:hidden">
-          {!isCollapsed && (
-            <h2 className="text-lg font-semibold">Admin Panel</h2>
+        {/* Branding Section */}
+        <div className="flex items-center justify-between h-16 px-4 border-b">
+          {isCollapsed ? (
+            <div className="flex items-center justify-center w-full">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground">
+                <LayoutDashboard className="h-6 w-6" />
+              </div>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary text-primary-foreground flex-shrink-0">
+                <LayoutDashboard className="h-6 w-6" />
+              </div>
+              <div>
+                <h1 className="text-lg font-bold leading-tight">Admin Panel</h1>
+                <p className="text-xs text-muted-foreground">User Management System</p>
+              </div>
+            </div>
           )}
           <button
             onClick={onClose}
-            className="p-2 hover:bg-accent rounded-md"
+            className="lg:hidden p-2 hover:bg-accent rounded-md"
           >
             <X className="h-5 w-5" />
           </button>
