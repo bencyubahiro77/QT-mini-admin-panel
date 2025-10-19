@@ -76,3 +76,10 @@ export interface ValidateUserInput {
   role?: string;
   status?: string;
 }
+
+export interface EnvConfig {
+  NODE_ENV: string;
+  PORT: number;
+  DATABASE_URL: string;
+  CORS_ORIGIN: string;
+} 

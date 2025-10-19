@@ -1,22 +1,26 @@
-import express, { Application, Request, Response, NextFunction } from 'express';
+import express, { Application, Request, Response } from 'express';
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import { swaggerSpec } from './config/swagger';
+import { swaggerSpec, env, prisma } from './config';
+import { requestLogger, errorHandler, notFoundHandler } from './middleware';
 import userRoutes from './routes/user.routes';
-
 
 const app: Application = express();
 
-// Middleware
 app.use(cors({
-  origin: '*',
+  origin: env.CORS_ORIGIN,
   credentials: true,
 }));
 
+// Body Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Root endpoint
+// Request Logging (only in development)
+if (env.NODE_ENV === 'development') {
+  app.use(requestLogger);
+}
+
 app.get('/', (req: Request, res: Response) => {
   res.status(200).json({
     name: 'Admin Panel API',
@@ -25,6 +29,7 @@ app.get('/', (req: Request, res: Response) => {
     endpoints: {
       health: '/health',
       docs: '/api-docs',
+      users: '/api/users',
     }
   });
 });
@@ -35,32 +40,36 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   customSiteTitle: 'Admin Panel API Docs',
 }));
 
-// Health check endpoint 
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({
+// Health check endpoint with database status
+app.get('/health', async (req: Request, res: Response) => {
+  const healthCheck = {
     status: 'healthy',
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-  });
+    environment: env.NODE_ENV,
+    database: 'unknown',
+  };
+
+  try {
+    // Check database connection
+    await prisma.$queryRaw`SELECT 1`;
+    healthCheck.database = 'connected';
+  } catch (error) {
+    healthCheck.database = 'disconnected';
+    healthCheck.status = 'unhealthy';
+  }
+
+  const statusCode = healthCheck.status === 'healthy' ? 200 : 503;
+  res.status(statusCode).json(healthCheck);
 });
 
 // API Routes
 app.use('/api/users', userRoutes);
 
-// 404 handler
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Not Found',
-    path: req.path,
-  });
-});
+// 404 Handler (must be after all routes)
+app.use(notFoundHandler);
 
-// Error handler
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-  res.status(500).json({
-    error: 'Internal Server Error',
-    message: err.message,
-  });
-});
+// Global Error Handler (must be last)
+app.use(errorHandler);
 
 export default app;
